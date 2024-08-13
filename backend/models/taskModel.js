@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-const createSchema = new mongoose.Schema({
+const taskSchema = new mongoose.Schema({
   task: {
     type: String,
     required: true,
   },
 });
 
-const Createtodo = mongoose.model("Create", createSchema);
+const Createtodo = mongoose.model("Createtodo", taskSchema);
 module.exports = Createtodo;
