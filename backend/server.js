@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const taskRoute = require("./routes/taskRoute");
+const userRoute = require("./routes/userRoute");
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ db.once("open", () => {
 });
 
 app.use("/tasks", taskRoute);
+app.use("/user", userRoute);
 
 app.listen(port, () => {
   console.log(`Server started on ${port} `);
