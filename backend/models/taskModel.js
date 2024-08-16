@@ -12,5 +12,4 @@ const taskSchema = new mongoose.Schema({
   },
 });
 
-const Createtodo = mongoose.model("Createtodo", taskSchema);
-module.exports = Createtodo;
+module.exports = mongoose.model("Createtodo", taskSchema);

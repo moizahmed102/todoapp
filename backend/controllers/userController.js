@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
-const { use } = require("../routes/taskRoute");
+const Createtodo = require("../models/taskModel");
 
 const token = (id) => {
   return jwt.sign({ id }, process.env.JWT_KEY, { expiresIn: "20d" });
@@ -35,28 +35,44 @@ const userSignup = async (req, res) => {
 
 const userLogin = async (req, res) => {
   try {
-    const { name, password } = req.body;
-    const user = await User.findOne({ name });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
     if (!user) {
-      res.status(500).send("user not found");
+      return res.status(404).send("User not found");
     }
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      res.status(500).send("password not found");
+      return res.status(400).send("Invalid password");
     }
     if (user) {
-      res
-        .status(201)
-        .json({
-          _id: user.id,
-          name: user.name,
-          email: user.email,
-          usertoken: token(user.id),
-        });
+      res.status(201).json({
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        usertoken: token(user.id),
+      });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).send("Login failed");
   }
 };
 
-module.exports = { userSignup, userLogin };
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    const gettasks = await Createtodo.find({ user: req.user.id });
+    res.status(200).json({
+      user,
+      gettasks,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "failed",
+      message: err.message,
+    });
+  }
+};
+
+module.exports = { userSignup, userLogin, getProfile };
