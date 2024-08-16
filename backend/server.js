@@ -3,11 +3,16 @@ const express = require("express");
 const mongoose = require("mongoose");
 const taskRoute = require("./routes/taskRoute");
 const userRoute = require("./routes/userRoute");
+const uploadRoutes = require("./routes/uploads");
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 dotenv.config();
+
+app.use("/uploads", express.static("uploads"));
+
+app.use("/api", uploadRoutes);
 
 mongoose.connect(process.env.MONGODB_URL);
 const port = process.env.PORT || 3000;
