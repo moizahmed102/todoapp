@@ -1,5 +1,14 @@
 const Createtodo = require("../models/taskModel");
 
+/* const userId = mongoose.Types.ObjectId(req.user.id);
+
+    const totalTasks = await Createtodo.countDocuments({ user: userId });
+
+    const paginatedTasks = await Createtodo.aggregate([
+      { $match: { user: userId } }, // Correctly match user ObjectId
+      { $skip: page * tasksPerPage },
+      { $limit: tasksPerPage },
+    ]);*/
 const getTasks = async (req, res) => {
   try {
     const page = req.query.p || 0;
