@@ -2,10 +2,17 @@ const Createtodo = require("../models/taskModel");
 
 const getTasks = async (req, res) => {
   try {
-    const tasks = await Createtodo.find({ user: req.user.id });
+    const page = req.query.p || 0;
+    const tasksPerPage = 4;
+    const totalTasks = await Createtodo.countDocuments({ user: req.user.id });
+    const tasks = await Createtodo.find({ user: req.user.id })
+      .skip(page * tasksPerPage)
+      .limit(tasksPerPage);
+
     res.status(200).json({
       status: "Success",
       data: {
+        totalTasks,
         tasks,
       },
     });
