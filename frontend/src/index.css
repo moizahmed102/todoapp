@@ -1,5 +1,7 @@
 body {
   margin: 0;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
 .heading {
   display: flex;
@@ -16,4 +18,29 @@ body {
 .form-data {
   padding: 5px ;
   margin: 10px;
+}
+.home {
+  text-align: center;
+  padding: 20px;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 10px 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+footer {
+  margin-top: 20px;
 }
