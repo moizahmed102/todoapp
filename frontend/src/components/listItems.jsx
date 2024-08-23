@@ -1,4 +1,4 @@
-
+// used this task to practice state management useState, not needed for todo app
 import React, { useState } from 'react';
 
 const ListItems = () => {
