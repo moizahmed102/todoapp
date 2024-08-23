@@ -1,12 +1,22 @@
 const Createtodo = require("../models/taskModel");
+const mongoose = require("mongoose");
 
 const getTasks = async (req, res) => {
   try {
-    const tasks = await Createtodo.find({ user: req.user.id });
+    const page = req.query.page || 0;
+    const tasksPerPage = 4;
+    const userId = mongoose.Types.ObjectId.createFromHexString(req.user.id);
+    const totalTasks = await Createtodo.countDocuments({ user: userId });
+    const paginatedTasks = await Createtodo.aggregate([
+      { $match: { user: userId } },
+      { $skip: page * tasksPerPage },
+      { $limit: tasksPerPage },
+    ]);
     res.status(200).json({
       status: "Success",
       data: {
-        tasks,
+        totalTasks,
+        paginatedTasks,
       },
     });
   } catch (err) {
