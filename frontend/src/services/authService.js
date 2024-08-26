@@ -5,6 +5,7 @@ const API_URL = "http://localhost:4000/user";
 const signupUser = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/signup`, userData);
+    localStorage.setItem("token", response.data.token);
     return response.data;
   } catch (error) {
     throw error.response.data;

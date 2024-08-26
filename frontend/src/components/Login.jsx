@@ -17,8 +17,7 @@ function Login() {
     setLoading(true);
     setError(""); 
     try {
-      const response = await loginUser({ email, password });
-      console.log("User logged in:", response);
+      await loginUser({ email, password }); 
       navigate("/profile");
     } catch (error) {
       console.log(error);
@@ -37,13 +36,15 @@ function Login() {
 
   return (
     <>
-      <h1 className="heading">Login To Your Account</h1>
-      <div>
-        <form onSubmit={onSubmit} className="form">
-          <div className="form-data">
+     <div className="container mt-5">
+     <h2 className="mb-4">Login To Your Account</h2>
+     <form onSubmit={onSubmit}>
+        <div className="mb-3">
+          <label className="form-label">Email</label>
             <input
               type="email"
               name="email"
+              className="form-control"
               value={email}
               id="email"
               placeholder="Enter your email"
@@ -51,10 +52,12 @@ function Login() {
               required
             />
           </div>
-          <div className="form-data">
+          <div className="mb-3">
+          <label className="form-label">Password</label>
             <input
               type="password"
               name="password"
+              className="form-control"
               value={password}
               id="password"
               placeholder="Enter your password"
@@ -62,12 +65,10 @@ function Login() {
               required
             />
           </div>
-          {error && <p className="error">{error}</p>}
-          <div className="form-data">
-            <button type="submit" disabled={loading}>
+          {error && <div className="alert alert-danger">{error}</div>}
+            <button className="btn btn-primary" type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </button>
-          </div>
         </form>
       </div>
     </>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { createTask, updateTask, deleteTask, getTasks } from "../services/taskService";
+import { useNavigate } from "react-router-dom";
+
 
 function Profile() {
   const [tasks, setTasks] = useState([]);
@@ -25,6 +27,8 @@ function Profile() {
     }
     fetchTasks();
   }, [currentPage]);
+
+ const navigate = useNavigate()
 
   const updatePageInUrl = (page) => {
     setSearchParams({ page });
@@ -78,23 +82,28 @@ function Profile() {
       updatePageInUrl(currentPage - 1);
     }
   };
+  const handlelogout = () => {
+    localStorage.removeItem("token")
+    navigate("/login")
+  }
 
   return (
-    <div>
-      <h1>My Profile</h1>
-      <h2>My Tasks</h2>
-      <div>
+    <div className="container">
+      <h1 className="text-center my-4">My Profile</h1>
+      <h2 className="mb-4">My Tasks</h2>
+      <div className="mb-3">
         <input
           type="text"
+          className="form-control"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
           placeholder="Add new task"
         />
-        <button onClick={handleCreateTask}>Add Task</button>
+        <button className="btn btn-primary mt-2" onClick={handleCreateTask}>Add Task</button>
       </div>
-      <ul>
+      <ul className="list-group mb-3">
         {tasks.map((task) => (
-          <li key={task._id}>
+          <li className="list-group-item d-flex justify-content-between align-items-center" key={task._id}>
             {editTaskId === task._id ? (
               <>
                 <input
@@ -108,22 +117,39 @@ function Profile() {
             ) : (
               <>
                 <span>{task.task}</span>
-                <button onClick={() => { setEditTaskId(task._id); setEditTaskText(task.task); }}>Edit</button>
-                <button onClick={() => handleDeleteTask(task._id)}>Delete</button>
+                <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => { setEditTaskId(task._id); setEditTaskText(task.task); }}>Edit</button>
+                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteTask(task._id)}>Delete</button>
               </>
             )}
           </li>
         ))}
       </ul>
-      <div>
-        <button onClick={handlePreviousPage} disabled={currentPage === 0}>
-          Previous
-        </button>
-        <button onClick={handleNextPage} disabled={(currentPage + 1) * tasksPerPage >= totalTasks}>
-          Next
-        </button>
-      </div>
+  <div className="d-flex justify-content-between align-items-center mb-3">
+    <div className="btn-group">
+      <button
+        className="btn btn-secondary"
+        onClick={handlePreviousPage}
+        disabled={currentPage === 0}
+      >
+        Previous
+      </button>
+      <button
+        className="btn btn-secondary"
+        onClick={handleNextPage}
+        disabled={(currentPage + 1) * tasksPerPage >= totalTasks}
+      >
+        Next
+      </button>
     </div>
+    <button
+      className="btn btn-danger"
+      onClick={handlelogout}
+    >
+      Logout
+    </button>
+  </div>
+</div>
+
   );
 }
 
