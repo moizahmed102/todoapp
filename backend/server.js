@@ -4,11 +4,13 @@ const mongoose = require("mongoose");
 const taskRoute = require("./routes/taskRoute");
 const userRoute = require("./routes/userRoute");
 const uploadRoutes = require("./routes/uploads");
+const cors = require("cors");
 
+dotenv.config();
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-dotenv.config();
 
 app.use("/uploads", express.static("uploads"));
 

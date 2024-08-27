@@ -25,7 +25,7 @@ const userSignup = async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
-      usertoken: token(user.id),
+      token: token(user.id),
     });
   } catch (err) {
     console.log(err);
@@ -46,11 +46,11 @@ const userLogin = async (req, res) => {
       return res.status(400).send("Invalid password");
     }
     if (user) {
-      res.status(201).json({
+      res.status(200).json({
         _id: user.id,
         name: user.name,
         email: user.email,
-        usertoken: token(user.id),
+        token: token(user.id),
       });
     }
   } catch (err) {
