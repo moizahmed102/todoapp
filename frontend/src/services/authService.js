@@ -6,6 +6,7 @@ const signupUser = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/signup`, userData);
     localStorage.setItem("token", response.data.token);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response.data;
@@ -27,6 +28,7 @@ const getUserProfile = async () => {
     const response = await axios.get(`${API_URL}/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response.data;

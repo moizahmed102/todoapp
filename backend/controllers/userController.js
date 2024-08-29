@@ -62,10 +62,8 @@ const userLogin = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-    const gettasks = await Createtodo.find({ user: req.user.id });
     res.status(200).json({
       user,
-      gettasks,
     });
   } catch (err) {
     res.status(500).json({
