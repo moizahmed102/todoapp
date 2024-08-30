@@ -14,6 +14,18 @@ const getTasks = async (page = 0) => {
   }
 };
 
+const getAllTasksForAdmin = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${API_URL}/admin`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
 const createTask = async (taskData) => {
   try {
     const token = localStorage.getItem("token");
@@ -49,4 +61,4 @@ const deleteTask = async (taskId) => {
   }
 };
 
-export { getTasks, createTask, updateTask, deleteTask };
+export { getTasks, getAllTasksForAdmin, createTask, updateTask, deleteTask };

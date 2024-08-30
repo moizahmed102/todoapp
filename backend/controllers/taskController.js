@@ -5,20 +5,37 @@ const getTasks = async (req, res) => {
   try {
     const page = req.query.page || 0;
     const tasksPerPage = 4;
-    const userId = mongoose.Types.ObjectId.createFromHexString(req.user.id);
-    const totalTasks = await Createtodo.countDocuments({ user: userId });
-    const paginatedTasks = await Createtodo.aggregate([
-      { $match: { user: userId } },
-      { $skip: page * tasksPerPage },
-      { $limit: tasksPerPage },
-    ]);
-    res.status(200).json({
-      status: "Success",
-      data: {
-        totalTasks,
-        paginatedTasks,
-      },
-    });
+    let tasks;
+
+    if (req.user.role === "admin") {
+      const totalTasks = await Createtodo.countDocuments();
+      tasks = await Createtodo.aggregate([
+        { $skip: page * tasksPerPage },
+        { $limit: tasksPerPage },
+      ]);
+      return res.status(200).json({
+        status: "Success",
+        data: {
+          totalTasks,
+          tasks,
+        },
+      });
+    } else {
+      const userId = mongoose.Types.ObjectId.createFromHexString(req.user.id);
+      const totalTasks = await Createtodo.countDocuments({ user: userId });
+      const paginatedTasks = await Createtodo.aggregate([
+        { $match: { user: userId } },
+        { $skip: page * tasksPerPage },
+        { $limit: tasksPerPage },
+      ]);
+      res.status(200).json({
+        status: "Success",
+        data: {
+          totalTasks,
+          paginatedTasks,
+        },
+      });
+    }
   } catch (err) {
     res.status(500).json({
       status: "Failed",
@@ -42,11 +59,12 @@ const postTasks = async (req, res) => {
 const updateTasks = async (req, res) => {
   try {
     const taskId = req.params.id;
+    const query =
+      req.user.role === "admin"
+        ? { _id: taskId }
+        : { _id: taskId, user: req.user.id };
 
-    const task = await Createtodo.findOne({
-      _id: taskId,
-      user: req.user.id,
-    });
+    const task = await Createtodo.findOne(query);
     if (!task) {
       return res
         .status(404)
@@ -70,10 +88,11 @@ const updateTasks = async (req, res) => {
 const deleteTasks = async (req, res) => {
   try {
     const taskId = req.params.id;
-    const task = await Createtodo.findOne({
-      _id: taskId,
-      user: req.user.id,
-    });
+    const query =
+      req.user.role === "admin"
+        ? { _id: taskId }
+        : { _id: taskId, user: req.user.id };
+    const task = await Createtodo.findOne(query);
     if (!task) {
       return res
         .status(404)
