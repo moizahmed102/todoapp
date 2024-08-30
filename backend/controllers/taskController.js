@@ -6,37 +6,26 @@ const getTasks = async (req, res) => {
     const page = parseInt(req.query.page) || 0;
     const tasksPerPage = 10;
 
-    let tasks;
+    const matchCondition =
+      req.user.role === "admin"
+        ? {}
+        : { user: mongoose.Types.ObjectId.createFromHexString(req.user.id) };
 
-    if (req.user.role === "admin") {
-      const totalTasks = await Createtodo.countDocuments();
-      tasks = await Createtodo.aggregate([
-        { $skip: page * tasksPerPage },
-        { $limit: tasksPerPage },
-      ]);
-      return res.status(200).json({
-        status: "Success",
-        data: {
-          totalTasks,
-          tasks,
-        },
-      });
-    } else {
-      const userId = mongoose.Types.ObjectId.createFromHexString(req.user.id);
-      const totalTasks = await Createtodo.countDocuments({ user: userId });
-      tasks = await Createtodo.aggregate([
-        { $match: { user: userId } },
-        { $skip: page * tasksPerPage },
-        { $limit: tasksPerPage },
-      ]);
-      res.status(200).json({
-        status: "Success",
-        data: {
-          totalTasks,
-          tasks,
-        },
-      });
-    }
+    const totalTasks = await Createtodo.countDocuments(matchCondition);
+
+    const tasks = await Createtodo.aggregate([
+      { $match: matchCondition },
+      { $skip: page * tasksPerPage },
+      { $limit: tasksPerPage },
+    ]);
+
+    res.status(200).json({
+      status: "Success",
+      data: {
+        totalTasks,
+        tasks,
+      },
+    });
   } catch (err) {
     res.status(500).json({
       status: "Failed",
