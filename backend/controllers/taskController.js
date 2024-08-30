@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 
 const getTasks = async (req, res) => {
   try {
-    const page = req.query.page || 0;
-    const tasksPerPage = 4;
+    const page = parseInt(req.query.page) || 0;
+    const tasksPerPage = 10;
+
     let tasks;
 
     if (req.user.role === "admin") {
@@ -23,7 +24,7 @@ const getTasks = async (req, res) => {
     } else {
       const userId = mongoose.Types.ObjectId.createFromHexString(req.user.id);
       const totalTasks = await Createtodo.countDocuments({ user: userId });
-      const paginatedTasks = await Createtodo.aggregate([
+      tasks = await Createtodo.aggregate([
         { $match: { user: userId } },
         { $skip: page * tasksPerPage },
         { $limit: tasksPerPage },
@@ -32,7 +33,7 @@ const getTasks = async (req, res) => {
         status: "Success",
         data: {
           totalTasks,
-          paginatedTasks,
+          tasks,
         },
       });
     }

@@ -14,15 +14,20 @@ const getTasks = async (page = 0) => {
   }
 };
 
-const getAllTasksForAdmin = async () => {
+const getAllTasksForAdmin = async (page = 0) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(`${API_URL}/admin`, {
+      params: { page },
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    console.error(
+      "Error fetching tasks:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
 

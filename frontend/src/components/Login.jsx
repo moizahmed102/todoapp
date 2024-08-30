@@ -27,12 +27,15 @@ function Login() {
     }));
   };
   useEffect(() => {
-    console.log("User:", user);
     if (user) {
-      console.log("Navigating to profile...");
-      navigate("/profile");
+      if (user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/profile");
+      }
     }
   }, [user, navigate]);
+  
   
   return (
     <>

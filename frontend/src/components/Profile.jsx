@@ -9,11 +9,9 @@ function Profile() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "0", 10);
-  const tasksPerPage = 4;
+  const tasksPerPage = 10;
 
-  // Remove unused variables
-  // const { user, token, status } = useSelector((state) => state.auth);
-  const { token } = useSelector((state) => state.auth); // Only keep token if it's used
+  const { token } = useSelector((state) => state.auth); 
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [editTaskId, setEditTaskId] = useState(null);
@@ -32,8 +30,8 @@ function Profile() {
     async function fetchTasks() {
       try {
         const data = await getTasks(currentPage);
-        setTasks(data.data.paginatedTasks);
-        setTotalTasks(data.data.totalTasks);
+        setTasks(data.data.tasks || []);
+        setTotalTasks(data.data.totalTasks || 0);
       } catch (error) {
         console.log(error);
       }
@@ -49,11 +47,11 @@ function Profile() {
     if (!newTask) return;
     try {
       await createTask({ task: newTask });
+      setNewTask("");
       updatePageInUrl(0);
     } catch (error) {
       console.log(error);
     }
-    setNewTask("");
   };
 
   const handleUpdateTask = async (taskId) => {
@@ -61,8 +59,8 @@ function Profile() {
     try {
       await updateTask(taskId, { task: editTaskText });
       const data = await getTasks(currentPage);
-      setTasks(data.data.paginatedTasks);
-      setTotalTasks(data.data.totalTasks);
+      setTasks(data.data.tasks || []);
+      setTotalTasks(data.data.totalTasks || 0)
     } catch (error) {
       console.log(error);
     }
@@ -74,8 +72,8 @@ function Profile() {
     try {
       await deleteTask(taskId);
       const data = await getTasks(currentPage);
-      setTasks(data.data.paginatedTasks);
-      setTotalTasks(data.data.totalTasks);
+      setTasks(data.data.tasks || []);
+      setTotalTasks(data.data.totalTasks || 0)
     } catch (error) {
       console.log(error);
     }
@@ -87,12 +85,12 @@ function Profile() {
       updatePageInUrl(nextPage);
     }
   };
-
+  
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       updatePageInUrl(currentPage - 1);
     }
-  };
+  };  
 
   const handleLogout = () => {
     dispatch(logout());
