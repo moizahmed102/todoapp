@@ -5,25 +5,34 @@ const getTasks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 0;
     const tasksPerPage = 10;
+    const skip = page * tasksPerPage;
 
     const matchCondition =
       req.user.role === "admin"
         ? {}
         : { user: mongoose.Types.ObjectId.createFromHexString(req.user.id) };
 
-    const totalTasks = await Createtodo.countDocuments(matchCondition);
-
-    const tasks = await Createtodo.aggregate([
+    const [result] = await Createtodo.aggregate([
       { $match: matchCondition },
-      { $skip: page * tasksPerPage },
-      { $limit: tasksPerPage },
+      {
+        $facet: {
+          totalCount: [{ $count: "count" }],
+          tasks: [{ $skip: skip }, { $limit: tasksPerPage }],
+        },
+      },
+      {
+        $project: {
+          totalTasks: { $arrayElemAt: ["$totalCount.count", 0] },
+          tasks: 1,
+        },
+      },
     ]);
 
     res.status(200).json({
       status: "Success",
       data: {
-        totalTasks,
-        tasks,
+        totalTasks: result.totalTasks || 0,
+        tasks: result.tasks || [],
       },
     });
   } catch (err) {
