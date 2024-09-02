@@ -4,7 +4,7 @@ const User = require("../models/userModel");
 
 const token = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_KEY, {
-    expiresIn: "20d",
+    expiresIn: "1d",
   });
 };
 
@@ -30,7 +30,6 @@ const userSignup = async (req, res) => {
       role: user.role,
     });
   } catch (err) {
-    console.log(err);
     res.status(401).send("Signup failed");
   }
 };
@@ -57,7 +56,6 @@ const userLogin = async (req, res) => {
       });
     }
   } catch (err) {
-    console.error(err);
     res.status(500).send("Login failed");
   }
 };

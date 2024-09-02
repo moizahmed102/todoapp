@@ -1,4 +1,4 @@
-const Createtodo = require("../models/taskModel");
+const Todo = require("../models/taskModel");
 const mongoose = require("mongoose");
 
 const getTasks = async (req, res) => {
@@ -12,7 +12,7 @@ const getTasks = async (req, res) => {
         ? {}
         : { user: mongoose.Types.ObjectId.createFromHexString(req.user.id) };
 
-    const [result] = await Createtodo.aggregate([
+    const [result] = await Todo.aggregate([
       { $match: matchCondition },
       {
         $facet: {
@@ -45,7 +45,7 @@ const getTasks = async (req, res) => {
 
 const postTasks = async (req, res) => {
   try {
-    const newtask = await Createtodo.create({
+    const newtask = await Todo.create({
       task: req.body.task,
       user: req.user.id,
     });
@@ -63,7 +63,7 @@ const updateTasks = async (req, res) => {
         ? { _id: taskId }
         : { _id: taskId, user: req.user.id };
 
-    const task = await Createtodo.findOne(query);
+    const task = await Todo.findOne(query);
     if (!task) {
       return res
         .status(404)
@@ -91,14 +91,14 @@ const deleteTasks = async (req, res) => {
       req.user.role === "admin"
         ? { _id: taskId }
         : { _id: taskId, user: req.user.id };
-    const task = await Createtodo.findOne(query);
+    const task = await Todo.findOne(query);
     if (!task) {
       return res
         .status(404)
         .json({ message: "Task not found or not authorized" });
     }
 
-    await Createtodo.findByIdAndDelete(taskId);
+    await Todo.findByIdAndDelete(taskId);
 
     res.status(200).json({
       status: "Success",

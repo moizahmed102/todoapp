@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
 import { getAllTasksForAdmin, updateTask, deleteTask } from '../services/taskService';
 import { logout } from '../features/auth/authSlice';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -24,7 +26,7 @@ function AdminDashboard() {
       setTasks(data.data.tasks || []);
       setTotalTasks(data.data.totalTasks || 0);
     } catch (error) {
-      console.error(error);
+      toast.error("Failed to fetch tasks.");
       navigate('/login'); 
     }
   };
@@ -34,18 +36,20 @@ function AdminDashboard() {
       await updateTask(taskId, { task: newTaskText });
       setEditingTaskId(null);
       setNewTaskText('');
-      fetchTasks(); 
+      fetchTasks();
+      toast.success("Task updated successfully.");
     } catch (error) {
-      console.log("Error updating task:", error);
+      toast.error("Error updating task.");
     }
   };
 
   const handleDeleteTask = async (taskId) => {
     try {
       await deleteTask(taskId);
-      fetchTasks(); 
+      fetchTasks();
+      toast.success("Task deleted successfully.");
     } catch (error) {
-      console.log("Error deleting task:", error);
+      toast.error("Error deleting task.");
     }
   };
 
@@ -142,6 +146,7 @@ function AdminDashboard() {
         </button>
       </div>
       <button className="btn btn-danger mb-3" onClick={handleLogout}>Logout</button>
+      <ToastContainer />
     </div>
   );
 }
