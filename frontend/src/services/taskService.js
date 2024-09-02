@@ -1,68 +1,52 @@
-import axios from "axios";
+import axiosInstance from "../interceptors/axiosInstance";
 
-const API_URL = "http://localhost:4000/tasks";
+const API_URL = "/tasks";
 
 const getTasks = async (page = 0) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}?page=${page}`, {
-      headers: { Authorization: `Bearer ${token}` },
+    const response = await axiosInstance.get(`${API_URL}`, {
+      params: { page },
     });
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error;
   }
 };
 
 const getAllTasksForAdmin = async (page = 0) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}/admin`, {
+    const response = await axiosInstance.get(`${API_URL}/admin`, {
       params: { page },
-      headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error) {
-    console.error(
-      "Error fetching tasks:",
-      error.response?.data || error.message
-    );
     throw error;
   }
 };
 
 const createTask = async (taskData) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.post(API_URL, taskData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axiosInstance.post(API_URL, taskData);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error;
   }
 };
 
 const updateTask = async (taskId, taskData) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.put(`${API_URL}/${taskId}`, taskData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axiosInstance.put(`${API_URL}/${taskId}`, taskData);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error;
   }
 };
 
 const deleteTask = async (taskId) => {
   try {
-    const token = localStorage.getItem("token");
-    await axios.delete(`${API_URL}/${taskId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    await axiosInstance.delete(`${API_URL}/${taskId}`);
   } catch (error) {
-    throw error.response.data;
+    throw error;
   }
 };
 
