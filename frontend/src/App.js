@@ -1,9 +1,11 @@
+import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import LandingPage from "./components/LandingPage";
 import Profile from "./components/Profile";
-import ProtectedRoute from "./routes/PrivateRoute";
+import PrivateRoute from "./routes/PrivateRoute";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   return (
@@ -16,9 +18,17 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <PrivateRoute>
                 <Profile />
-              </ProtectedRoute>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <AdminDashboard />
+              </PrivateRoute>
             }
           />
         </Routes>
