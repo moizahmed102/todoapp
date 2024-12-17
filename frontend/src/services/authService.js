@@ -1,35 +1,33 @@
-import axios from "axios";
+import axiosInstance from "../interceptors/axiosInstance";
 
-const API_URL = "http://localhost:4000/user";
+const API_URL = "/user";
 
 const signupUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/signup`, userData);
+    const response = await axiosInstance.post(`${API_URL}/signup`, userData);
     localStorage.setItem("token", response.data.token);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error;
   }
 };
+
 const loginUser = async (credentials) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, credentials);
+    const response = await axiosInstance.post(`${API_URL}/login`, credentials);
     localStorage.setItem("token", response.data.token);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error;
   }
 };
 
 const getUserProfile = async () => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axiosInstance.get(`${API_URL}/profile`);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error;
   }
 };
 

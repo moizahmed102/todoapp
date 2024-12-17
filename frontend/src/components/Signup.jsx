@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { signupUser } from "../services/authService";
+import React, { useEffect, useState } from "react";
+import { signupUserThunk } from "../features/auth/authSlice";
+import {useSelector, useDispatch} from "react-redux"
 import { useNavigate } from "react-router-dom";
 
 function Signup() {
@@ -10,23 +11,19 @@ function Signup() {
     confirmPassword: "",
   });
   const { name, email, password, confirmPassword } = formData;
+
+  const dispatch = useDispatch()
   const navigate = useNavigate();
+
+  const {status, error, user} = useSelector((state) => state.auth)
 
   const onSubmit = async (event) => {
     event.preventDefault();
     if (password !== confirmPassword) {
       alert("Passwords do not match");
-      return;
+      return;}
+      dispatch(signupUserThunk({name, email, password}))
     }
-
-    try {
-      await signupUser({ name, email, password });
-      navigate("/profile");
-    } catch (error) {
-      console.log(error);
-      alert("Signup failed: " + error.message);
-    }
-  };
 
   const onChange = (event) => {
     setFormData((prevState) => ({
@@ -34,13 +31,22 @@ function Signup() {
       [event.target.name]: event.target.value,
     }));
   };
-
+  useEffect(() => {
+    if(user) {
+      navigate("/profile")
+    }
+  },[user, navigate])
   return (
     <>
      <div className="d-flex justify-content-center align-items-center vh-100">
   <div className="w-50 p-4 shadow-lg rounded bg-light">
     <h1 className="text-center mb-4">Registration Page</h1>
     <form onSubmit={onSubmit} className="mx-auto">
+    {error && (
+              <div className="alert alert-danger" role="alert">
+                {error.message || "An error occurred during signup."}
+              </div>
+            )}
       <div className="form-group mb-3">
         <label htmlFor="name">Name</label>
         <input
@@ -94,9 +100,9 @@ function Signup() {
         />
       </div>
       <div className="form-group">
-        <button type="submit" className="btn btn-primary w-100">
-          Signup
-        </button>
+      <button type="submit" className="btn btn-primary w-100" disabled={status === 'loading'}>
+                {status === 'loading' ? "Signing up..." : "Signup"}
+      </button>
       </div>
     </form>
   </div>

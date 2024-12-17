@@ -9,9 +9,11 @@ const {
 } = require("../controllers/taskController");
 
 const authMiddleware = require("../middleware/authmiddleware");
+const authAdmin = require("../middleware/authAdmin");
 
-// Protect all task routes
 router.use(authMiddleware);
+
+router.get("/admin", authAdmin, getTasks);
 
 router.get("/", getTasks);
 
